@@ -1,4 +1,4 @@
-import { FunctionComponent, useEffect, useState } from 'react';
+import { FunctionComponent } from 'react';
 import Typography from '@mui/material/Typography';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
@@ -6,7 +6,7 @@ import ListItemText from '@mui/material/ListItemText';
 
 import { Layout } from '../ui';
 import { Transaction } from '../../../models';
-import { getStoredTransactions } from '../../../helpers';
+import { useTransactions } from '../../../helpers';
 
 const TransactionList: FunctionComponent<{ transactions: Transaction[] }> = ({
   transactions,
@@ -45,27 +45,11 @@ const NoTransactions: FunctionComponent = () => (
 );
 
 export const TransactionsTab: FunctionComponent = () => {
-  const [transactions, setTransactions] = useState<Transaction[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    const getTransactions = async () => {
-      setIsLoading(true);
-
-      const result = await getStoredTransactions();
-      setTransactions(result);
-
-      setIsLoading(false);
-    };
-
-    getTransactions();
-  }, []);
+  const transactions = useTransactions();
 
   return (
     <Layout>
-      {isLoading ? (
-        <></>
-      ) : transactions?.length ? (
+      {transactions?.length ? (
         <TransactionList transactions={transactions} />
       ) : (
         <NoTransactions />

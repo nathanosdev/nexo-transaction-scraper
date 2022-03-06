@@ -1,11 +1,11 @@
-import { FunctionComponent, useEffect, useState } from 'react';
+import { FunctionComponent, useState } from 'react';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
 
 import { Layout } from '../ui';
 import { Transaction } from '../../../models';
-import { getStoredTransactions } from '../../../helpers';
+import { useTransactions } from '../../../helpers';
 
 const ExportCompliantTransactions: FunctionComponent<{
   transactions: Transaction[];
@@ -119,16 +119,7 @@ const DeleteTransactions: FunctionComponent<{
 };
 
 export const ExportTab: FunctionComponent = () => {
-  const [transactions, setTransactions] = useState<Transaction[]>([]);
-
-  useEffect(() => {
-    const getTransactions = async () => {
-      const result = await getStoredTransactions();
-      setTransactions(result);
-    };
-
-    getTransactions();
-  }, []);
+  const transactions = useTransactions();
 
   return (
     <Layout>
