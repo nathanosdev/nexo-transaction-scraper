@@ -5,15 +5,23 @@ import CircularProgress from '@mui/material/CircularProgress';
 
 import { Layout } from '../ui';
 import { Transaction } from '../../../models';
-import { useTransactions } from '../../../helpers';
+import {
+  createCompliantCsv,
+  createFileDownlad,
+  createVerboseCsv,
+  useTransactions,
+} from '../../../helpers';
 
 const ExportCompliantTransactions: FunctionComponent<{
   transactions: Transaction[];
 }> = ({ transactions }) => {
   const [exportingTransactions, setExportingTransactions] = useState(false);
 
-  const onExportTransactionsClicked = async () => {
+  const onExportTransactionsClicked = () => {
     setExportingTransactions(true);
+
+    const csv = createCompliantCsv(transactions);
+    createFileDownlad(csv);
 
     setExportingTransactions(false);
   };
@@ -52,6 +60,9 @@ const ExportVerboseTransactions: FunctionComponent<{
 
   const onExportTransactionsClicked = async () => {
     setExportingTransactions(true);
+
+    const csv = createVerboseCsv(transactions);
+    createFileDownlad(csv);
 
     setExportingTransactions(false);
   };
