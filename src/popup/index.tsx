@@ -5,11 +5,13 @@ import { ThemeProvider } from '@mui/material/styles';
 
 import { App } from './App';
 import { theme } from './theme';
+import { GlobalStyles } from './GlobalStyles';
 
 ReactDOM.render(
   <React.StrictMode>
     <ThemeProvider theme={theme}>
       <CssBaseline />
+      <GlobalStyles />
 
       <App />
     </ThemeProvider>

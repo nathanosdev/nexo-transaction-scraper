@@ -1,23 +1,50 @@
-import { FunctionComponent, useEffect, useState } from 'react';
+import { FunctionComponent, SyntheticEvent, useState } from 'react';
+import Tabs from '@mui/material/Tabs';
+import Tab from '@mui/material/Tab';
 
-import { runScript } from '../helpers';
+import { TabPanel } from './components/ui';
+import { HomeTab, SettingsTab, TransactionsTab } from './components/tabs';
+
+const tabA11yProps = (index: number) => ({
+  id: `primary-tab-${index}`,
+  'aria-controls': `primary-tabpanel-${index}`,
+});
+
+const tabPanelA11yProps = (index: number) => ({
+  id: `primary-tabpanel-${index}`,
+  ariaLabelledBy: `primary-tab-${index}`,
+});
 
 export const App: FunctionComponent = () => {
-  const [pageTitle, setPageTitle] = useState('');
+  const [currentTab, setCurrentTab] = useState(0);
 
-  useEffect(() => {
-    const scrapeTransactions = async () => {
-      const result = await runScript('scrape-transactions.js', '');
-
-      setPageTitle(result);
-    };
-
-    scrapeTransactions();
-  }, []);
+  const onTabChanged = (_event: SyntheticEvent, newValue: number) => {
+    setCurrentTab(newValue);
+  };
 
   return (
     <>
-      <h1>{pageTitle}</h1>
+      <Tabs
+        value={currentTab}
+        onChange={onTabChanged}
+        aria-label="Navigation tabs"
+      >
+        <Tab label="Home" {...tabA11yProps(0)} />
+        <Tab label="Transactions" {...tabA11yProps(1)} />
+        <Tab label="Settings" {...tabA11yProps(2)} />
+      </Tabs>
+
+      <TabPanel currentTab={currentTab} index={0} {...tabPanelA11yProps(0)}>
+        <HomeTab />
+      </TabPanel>
+
+      <TabPanel currentTab={currentTab} index={1} {...tabPanelA11yProps(0)}>
+        <TransactionsTab />
+      </TabPanel>
+
+      <TabPanel currentTab={currentTab} index={2} {...tabPanelA11yProps(1)}>
+        <SettingsTab />
+      </TabPanel>
     </>
   );
 };
