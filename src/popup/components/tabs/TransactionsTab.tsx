@@ -6,6 +6,7 @@ import ListItemText from '@mui/material/ListItemText';
 
 import { Layout } from '../ui';
 import { Transaction } from '../../../models';
+import { getStoredTransactions } from '../../../helpers';
 
 const TransactionList: FunctionComponent<{ transactions: Transaction[] }> = ({
   transactions,
@@ -51,17 +52,10 @@ export const TransactionsTab: FunctionComponent = () => {
     const getTransactions = async () => {
       setIsLoading(true);
 
-      const result = await chrome.storage.local.get('transactions');
-      const rawTransactions = result?.transactions ?? '[]';
+      const result = await getStoredTransactions();
+      setTransactions(result);
 
-      try {
-        const parsedTransactions = JSON.parse(rawTransactions);
-        setTransactions(parsedTransactions);
-      } catch (error) {
-        console.error('Exception parsing stored transactions', error);
-      } finally {
-        setIsLoading(false);
-      }
+      setIsLoading(false);
     };
 
     getTransactions();

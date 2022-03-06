@@ -8,6 +8,10 @@ const globalStyles = css`
     height: 600px;
   }
 
+  body {
+    overflow-y: scroll;
+  }
+
   #root {
     height: 100%;
     display: flex;

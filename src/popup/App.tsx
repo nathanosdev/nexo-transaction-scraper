@@ -3,7 +3,7 @@ import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 
 import { TabPanel } from './components/ui';
-import { HomeTab, SettingsTab, TransactionsTab } from './components/tabs';
+import { HomeTab, ExportTab, TransactionsTab } from './components/tabs';
 
 const tabA11yProps = (index: number) => ({
   id: `primary-tab-${index}`,
@@ -31,7 +31,7 @@ export const App: FunctionComponent = () => {
       >
         <Tab label="Home" {...tabA11yProps(0)} />
         <Tab label="Transactions" {...tabA11yProps(1)} />
-        <Tab label="Settings" {...tabA11yProps(2)} />
+        <Tab label="Export" {...tabA11yProps(2)} />
       </Tabs>
 
       <TabPanel currentTab={currentTab} index={0} {...tabPanelA11yProps(0)}>
@@ -43,7 +43,7 @@ export const App: FunctionComponent = () => {
       </TabPanel>
 
       <TabPanel currentTab={currentTab} index={2} {...tabPanelA11yProps(1)}>
-        <SettingsTab />
+        <ExportTab />
       </TabPanel>
     </>
   );

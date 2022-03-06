@@ -1,3 +1,3 @@
 export * from './HomeTab';
-export * from './SettingsTab';
+export * from './ExportTab';
 export * from './TransactionsTab';
