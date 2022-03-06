@@ -3,7 +3,7 @@
   "description": "Scrape transactions from Nexo and export them as a CSV file",
   "version": "0.1",
   "manifest_version": 3,
-  "permissions": ["activeTab", "scripting"],
+  "permissions": ["activeTab", "scripting", "storage"],
   "action": {
     "default_title": "Scrape Nexo transactions",
     "default_popup": "src/popup/popup.html"

@@ -3,44 +3,57 @@ import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import CircularProgress from '@mui/material/CircularProgress';
-import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 
 import {
   getCurrentTab,
   isNexoTransactionsTab,
   runScript,
 } from '../../../helpers';
+import { Transaction } from '../../../models';
 import { Layout } from '../ui';
 
 const CorrectTab: FunctionComponent = () => {
-  const [pageTitle, setPageTitle] = useState('');
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [isScraping, setIsScraping] = useState(false);
 
   const onGetTransactionsClicked = () => {
     const scrapeTransactions = async () => {
       setIsScraping(true);
-      const result = await runScript('scrape-transactions.js', '');
-      setIsScraping(false);
+      const result = await runScript<Transaction[]>(
+        'scrape-transactions.js',
+        [],
+      );
 
-      setPageTitle(result);
+      setIsScraping(false);
+      setTransactions(result);
     };
 
     scrapeTransactions();
   };
 
+  useEffect(() => {
+    const storeTransactions = async () => {
+      await chrome.storage.sync.set({
+        transactions: JSON.stringify(transactions),
+      });
+    };
+
+    if (transactions?.length) {
+      storeTransactions();
+    }
+  }, [transactions]);
+
   return (
-    <Box sx={{ position: 'relative' }}>
-      <Button
-        variant="contained"
-        color="primary"
-        size="large"
-        onClick={onGetTransactionsClicked}
-        disabled={isScraping}
-        startIcon={<AccountBalanceWalletIcon />}
-      >
-        {isScraping ? <CircularProgress /> : pageTitle || 'Get Transactions'}
-      </Button>
-    </Box>
+    <Button
+      sx={{ width: '100%' }}
+      variant="contained"
+      color="primary"
+      size="large"
+      onClick={onGetTransactionsClicked}
+      disabled={isScraping}
+    >
+      {isScraping ? <CircularProgress /> : 'Get Transactions'}
+    </Button>
   );
 };
 
@@ -67,7 +80,7 @@ export const HomeTab: FunctionComponent = () => {
   return (
     <Layout>
       <Typography variant="h5" component="h1" gutterBottom>
-        {'Nexo Transaction Scraper'}
+        Nexo Transaction Scraper
       </Typography>
 
       <Box

@@ -16,5 +16,5 @@ export const runScript = async <T>(
     files: [filename],
   });
 
-  return frames?.[0]?.result ?? (defaultReturn as T);
+  return frames?.[0]?.result ?? defaultReturn;
 };
