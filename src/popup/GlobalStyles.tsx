@@ -4,11 +4,8 @@ import { Global, css } from '@emotion/react';
 const globalStyles = css`
   html,
   body {
-    width: 375px;
+    width: 425px;
     height: 600px;
-  }
-
-  body {
     overflow-y: scroll;
   }
 
