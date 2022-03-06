@@ -33,7 +33,7 @@ const CorrectTab: FunctionComponent = () => {
 
   useEffect(() => {
     const storeTransactions = async () => {
-      await chrome.storage.sync.set({
+      await chrome.storage.local.set({
         transactions: JSON.stringify(transactions),
       });
     };
