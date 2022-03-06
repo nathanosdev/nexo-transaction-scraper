@@ -20,11 +20,11 @@ const TransactionList: FunctionComponent<{ transactions: Transaction[] }> = ({
             <Typography variant="body2">{transaction.date}</Typography>
             {transaction.originAmount > 0 && (
               <Typography variant="body1" color="textPrimary">
-                - {transaction.originAmount} {transaction.originCurrency}
+                {transaction.originAmount} {transaction.originCurrency}
               </Typography>
             )}
             <Typography variant="body1" color="textPrimary">
-              + {transaction.destinationAmount}{' '}
+              {transaction.destinationAmount}{' '}
               {transaction.destinationCurrency}
             </Typography>
             <Typography variant="body2">{transaction.notes}</Typography>

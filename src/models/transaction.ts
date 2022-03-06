@@ -1,6 +1,7 @@
 export interface Transaction {
   id: string;
   type: string;
+  status: string;
   date: string;
   notes: string;
   origin: string;
@@ -9,4 +10,6 @@ export interface Transaction {
   destination: string;
   destinationAmount: number;
   destinationCurrency: string;
+  usdEquivalentAmount: number;
+  outstandingLoanAmount: number;
 }

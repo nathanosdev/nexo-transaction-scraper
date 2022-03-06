@@ -30,7 +30,8 @@ import { Transaction } from '../models';
       return [0, 'N/A'];
     }
     const parts = amountString.split(' ');
-    const amount = Number(parts[1]);
+
+    const amount = Number(`${parts[0]}${parts[1]}`);
 
     return [isNaN(amount) ? 0 : amount, parts[3] || 'N/A'];
   };
@@ -42,8 +43,9 @@ import { Transaction } from '../models';
 
     const hours = String(dateObj.getHours()).padStart(2, '0');
     const minutes = String(dateObj.getMinutes()).padStart(2, '0');
+    const seconds = String(dateObj.getSeconds()).padStart(2, '0');
 
-    return `${year}-${month}-${date} ${hours}:${minutes}`;
+    return `${year}-${month}-${date} ${hours}:${minutes}:${seconds}`;
   };
 
   /**
@@ -61,7 +63,7 @@ import { Transaction } from '../models';
 
     const transactions: Transaction[] = [];
 
-    transactionLoop: for (const transactionRow of transactionRows) {
+    for (const transactionRow of transactionRows) {
       transactionRow.click();
       const modalElement = await waitFor(() =>
         document.querySelector('.Modal.TransactionDetails'),
@@ -79,6 +81,7 @@ import { Transaction } from '../models';
       const transaction: Transaction = {
         id: '',
         type: transactionType,
+        status: 'approved',
         date: '',
         origin: '',
         originAmount: 0,
@@ -86,6 +89,8 @@ import { Transaction } from '../models';
         destination: '',
         destinationAmount: 0,
         destinationCurrency: '',
+        usdEquivalentAmount: 0,
+        outstandingLoanAmount: 0,
         notes: '',
       };
       const amountRow = dataRows[0];
@@ -95,13 +100,24 @@ import { Transaction } from '../models';
         transactionDetailsRow?.children?.[0]?.children?.[1]?.children?.[0]
           ?.textContent ?? '';
 
-      const dateRow = dataRows[1];
+      const dateStatusRow = dataRows[1];
+
       const dateString =
-        dateRow?.children?.[0]?.textContent?.replace('•', '') ?? '';
+        dateStatusRow?.children?.[0]?.textContent?.replace('•', '') ?? '';
       const date = new Date(dateString);
       transaction.date = formatDate(date);
 
-      const notesRow = dataRows[dataRows.length - 1];
+      transaction.status =
+        dateStatusRow?.children?.[1]?.children?.[0]?.textContent?.toLowerCase() ??
+        'approved';
+
+      let notesRow = dataRows[dataRows.length - 1];
+      switch (transactionType) {
+        case 'Interest': {
+          notesRow = dataRows[3];
+          break;
+        }
+      }
       transaction.notes = notesRow?.children?.[1]?.textContent ?? '';
 
       switch (transactionType) {
@@ -122,14 +138,34 @@ import { Transaction } from '../models';
       transaction.destination = 'Nexo';
 
       switch (transactionType) {
-        default: {
-          continue transactionLoop;
-        }
+        case 'Top Up Crypto':
+        case 'Exchange Cashback':
+        case 'Loan Withdrawal':
+        case 'Interest':
+        case 'Sell Order':
+        case 'Internal Transfer': {
+          const usdEquivalentAmountString =
+            amountRow?.children?.[2]?.textContent ?? '';
+          const [usdEquivalentAmount] = getAmountParts(
+            usdEquivalentAmountString,
+          );
 
+          transaction.usdEquivalentAmount = usdEquivalentAmount;
+          break;
+        }
+      }
+
+      switch (transactionType) {
         case 'Top Up Crypto':
         case 'Exchange Top Up':
         case 'Exchange Cashback':
-        case 'Interest': {
+        case 'Interest':
+        case 'Additional Interest':
+        case 'Loan Withdrawal':
+        case 'Repayment':
+        case 'Sell Order':
+        case 'Top Up Fiat':
+        case 'Internal Transfer': {
           const destinationAmountString =
             amountRow?.children?.[1]?.textContent ?? '';
 
