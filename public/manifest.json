@@ -1,7 +1,7 @@
 {
   "name": "Nexo Transaction Scraper",
   "description": "Scrape transactions from Nexo and export them as a CSV file",
-  "version": "0.1",
+  "version": "0.1.0",
   "manifest_version": 3,
   "permissions": ["activeTab", "scripting", "storage", "downloads"],
   "action": {

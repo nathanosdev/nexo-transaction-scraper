@@ -1,7 +1,7 @@
 {
   "name": "nexo-transaction-scraper",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.1.0",
   "scripts": {
     "build": "npm run build:web && npm run build:content",
     "build:web": "vite build",
