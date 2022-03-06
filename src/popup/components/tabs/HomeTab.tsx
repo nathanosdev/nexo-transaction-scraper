@@ -1,27 +1,87 @@
 import { FunctionComponent, useEffect, useState } from 'react';
 import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
+import Box from '@mui/material/Box';
+import CircularProgress from '@mui/material/CircularProgress';
+import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 
-import { runScript } from '../../../helpers';
+import {
+  getCurrentTab,
+  isNexoTransactionsTab,
+  runScript,
+} from '../../../helpers';
 import { Layout } from '../ui';
 
-export const HomeTab: FunctionComponent = () => {
+const CorrectTab: FunctionComponent = () => {
   const [pageTitle, setPageTitle] = useState('');
+  const [isScraping, setIsScraping] = useState(false);
 
-  useEffect(() => {
+  const onGetTransactionsClicked = () => {
     const scrapeTransactions = async () => {
+      setIsScraping(true);
       const result = await runScript('scrape-transactions.js', '');
+      setIsScraping(false);
 
       setPageTitle(result);
     };
 
     scrapeTransactions();
+  };
+
+  return (
+    <Box sx={{ position: 'relative' }}>
+      <Button
+        variant="contained"
+        color="primary"
+        size="large"
+        onClick={onGetTransactionsClicked}
+        disabled={isScraping}
+        startIcon={<AccountBalanceWalletIcon />}
+      >
+        {isScraping ? <CircularProgress /> : pageTitle || 'Get Transactions'}
+      </Button>
+    </Box>
+  );
+};
+
+const IncorrectTab: FunctionComponent = () => (
+  <Typography>
+    Transactions not found on the current page, please navigate to the Nexo
+    Transactions page.
+  </Typography>
+);
+
+export const HomeTab: FunctionComponent = () => {
+  const [isCorrectTab, setIsCorrectTab] = useState(false);
+
+  useEffect(() => {
+    const getIsCorrectTab = async () => {
+      const currentTab = await getCurrentTab();
+
+      setIsCorrectTab(isNexoTransactionsTab(currentTab));
+    };
+
+    getIsCorrectTab();
   }, []);
 
   return (
     <Layout>
       <Typography variant="h5" component="h1" gutterBottom>
-        {pageTitle}
+        {'Nexo Transaction Scraper'}
       </Typography>
+
+      <Box
+        sx={{
+          flexGrow: 1,
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'center',
+          paddingX: 2,
+        }}
+      >
+        {isCorrectTab ? <CorrectTab /> : <IncorrectTab />}
+      </Box>
     </Layout>
   );
 };
